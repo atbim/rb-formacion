@@ -6,33 +6,35 @@ initViewer(document.getElementById('preview')).then((viewer) => {
   setupModelUpload(viewer)
 
   const buttonBuscar = document.getElementById('buscar')
-  buttonBuscar.onclick = () => {
+  buttonBuscar.onclick = async () => {
     const textoBuscar = document.getElementById('textoBuscar')
-    viewer.search(textoBuscar.value, (dbids) => {
-      // Buscar dbids
-      viewer.isolate(dbids)
-      viewer.fitToView(dbids)
+    // viewer.search(textoBuscar.value, (dbids) => {
+    // Buscar dbids
+    const response = await fetch('/api/mydata')
+    const data = await response.json()
+    const dbids = data.dbids
+    viewer.isolate(dbids)
+    viewer.fitToView(dbids)
 
-      console.log('dbids: ', dbids)
-      viewer.model.getBulkProperties(
-        [11395, 13047, 13048], // Aquí debería de pasar la variable dbids que es el resultado de la búsqueda
-        ['Longitud', 'Área'],
-        (res) => {
-          let longitudTotal = 0
-          let areaTotal = 0
-          res.forEach((dbid) => {
-            longitudTotal += dbid.properties.find(
-              (p) => p.displayName === 'Longitud'
-            )?.displayValue
-            areaTotal += dbid.properties.find(
-              (p) => p.displayName === 'Área'
-            )?.displayValue
-          })
-          document.getElementById('length').innerHTML = longitudTotal.toFixed(2)
-          document.getElementById('area').innerHTML = areaTotal.toFixed(2)
-        }
-      )
-    })
+    viewer.model.getBulkProperties(
+      dbids, // Aquí debería de pasar la variable dbids que es el resultado de la búsqueda
+      ['Longitud', 'Área'],
+      (res) => {
+        let longitudTotal = 0
+        let areaTotal = 0
+        res.forEach((dbid) => {
+          longitudTotal += dbid.properties.find(
+            (p) => p.displayName === 'Longitud'
+          )?.displayValue
+          areaTotal += dbid.properties.find(
+            (p) => p.displayName === 'Área'
+          )?.displayValue
+        })
+        document.getElementById('length').innerHTML = longitudTotal.toFixed(2)
+        document.getElementById('area').innerHTML = areaTotal.toFixed(2)
+      }
+    )
+    // })
   }
 
   // Añadir evento al viewer
