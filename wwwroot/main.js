@@ -5,30 +5,35 @@ initViewer(document.getElementById('preview')).then((viewer) => {
   setupModelSelection(viewer, urn)
   setupModelUpload(viewer)
 
-  /* var buttonPropiedades = document.getElementById('propiedades')
-  buttonPropiedades.onclick = () => {
-    const dbid = viewer.getSelection()[0]
-    // Get Properties sólo devuelve las propiedaded de UN dbid
-    viewer.getProperties(dbid, (res) => {
-      console.log(res)
-      const category = res.properties.find(
-        (p) => p.attributeName === 'Category'
-      )?.displayValue
-      const type = res.properties.find(
-        (p) => p.attributeName === 'Type Name'
-      )?.displayValue
-      const length = res.properties.find(
-        (p) => p.attributeName === 'Length'
-      )?.displayValue
-      const area = res.properties.find(
-        (p) => p.attributeName === 'Area'
-      )?.displayValue
-      document.getElementById('category').innerText = category
-      document.getElementById('type').innerText = type
-      document.getElementById('length').innerText = length.toFixed(2)
-      document.getElementById('area').innerText = area.toFixed(2)
-    }) 
-  } */
+  const buttonBuscar = document.getElementById('buscar')
+  buttonBuscar.onclick = () => {
+    const textoBuscar = document.getElementById('textoBuscar')
+    viewer.search(textoBuscar.value, (dbids) => {
+      // Buscar dbids
+      viewer.isolate(dbids)
+      viewer.fitToView(dbids)
+
+      console.log('dbids: ', dbids)
+      viewer.model.getBulkProperties(
+        [11395, 13047, 13048], // Aquí debería de pasar la variable dbids que es el resultado de la búsqueda
+        ['Longitud', 'Área'],
+        (res) => {
+          let longitudTotal = 0
+          let areaTotal = 0
+          res.forEach((dbid) => {
+            longitudTotal += dbid.properties.find(
+              (p) => p.displayName === 'Longitud'
+            )?.displayValue
+            areaTotal += dbid.properties.find(
+              (p) => p.displayName === 'Área'
+            )?.displayValue
+          })
+          document.getElementById('length').innerHTML = longitudTotal.toFixed(2)
+          document.getElementById('area').innerHTML = areaTotal.toFixed(2)
+        }
+      )
+    })
+  }
 
   // Añadir evento al viewer
   viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, () => {
