@@ -156,4 +156,4 @@ function clearNotification() {
   overlay.style.display = 'none'
 }
 
-// Nuevo comentario
+// Y he añadido estas otras
