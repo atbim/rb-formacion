@@ -155,3 +155,5 @@ function clearNotification() {
   overlay.innerHTML = ''
   overlay.style.display = 'none'
 }
+
+// Nuevo comentario
