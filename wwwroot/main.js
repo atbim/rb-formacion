@@ -5,9 +5,10 @@ initViewer(document.getElementById('preview')).then((viewer) => {
   setupModelSelection(viewer, urn)
   setupModelUpload(viewer)
 
-  var buttonPropiedades = document.getElementById('propiedades')
+  /* var buttonPropiedades = document.getElementById('propiedades')
   buttonPropiedades.onclick = () => {
     const dbid = viewer.getSelection()[0]
+    // Get Properties sólo devuelve las propiedaded de UN dbid
     viewer.getProperties(dbid, (res) => {
       console.log(res)
       const category = res.properties.find(
@@ -26,10 +27,35 @@ initViewer(document.getElementById('preview')).then((viewer) => {
       document.getElementById('type').innerText = type
       document.getElementById('length').innerText = length.toFixed(2)
       document.getElementById('area').innerText = area.toFixed(2)
-    })
-  }
+    }) 
+  } */
+
   // Añadir evento al viewer
-  viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {})
+  viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, () => {
+    const dbid = viewer.getSelection()[0]
+    // Get Properties sólo devuelve las propiedaded de UN dbid
+    viewer.getProperties(dbid, (res) => {
+      console.log(res)
+      const category = res.properties.find(
+        (p) => p.attributeName === 'Category'
+      )?.displayValue
+      const type = res.properties.find(
+        (p) => p.attributeName === 'Type Name'
+      )?.displayValue
+      const length = res.properties.find(
+        (p) => p.attributeName === 'Length'
+      )?.displayValue
+      const area = res.properties.find(
+        (p) => p.attributeName === 'Area'
+      )?.displayValue
+      document.getElementById('category').innerText = category
+      document.getElementById('type').innerText = type
+      document.getElementById('length').innerText = length
+        ? length.toFixed(2)
+        : 'n/a'
+      document.getElementById('area').innerText = area ? area.toFixed(2) : 'n/a'
+    })
+  })
 })
 
 async function setupModelSelection(viewer, selectedUrn) {
