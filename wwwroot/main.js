@@ -1,11 +1,49 @@
 import { initViewer, loadModel } from './viewer.js'
+import { getFakeDataFromServer } from './tagsServer.js'
+
+function getAllLeafComponents(viewer, callback) {
+  var cbCount = 0 // count pending callbacks
+  var components = [] // store the results
+  var tree // the instance tree
+
+  function getLeafComponentsRec(parent) {
+    cbCount++
+    if (tree.getChildCount(parent) != 0) {
+      tree.enumNodeChildren(
+        parent,
+        function (children) {
+          getLeafComponentsRec(children)
+        },
+        false
+      )
+    } else {
+      components.push(parent)
+    }
+    if (--cbCount == 0) callback(components)
+  }
+  viewer.getObjectTree(function (objectTree) {
+    tree = objectTree
+    var allLeafComponents = getLeafComponentsRec(tree.getRootId())
+  })
+}
 
 initViewer(document.getElementById('preview')).then((viewer) => {
+  let viewer2
   const urn = window.location.hash?.substring(1)
   setupModelSelection(viewer, urn)
   setupModelUpload(viewer)
 
+  // Aquí está disponible el viewer
+
+  /* const instances = viewer.model.getBulkProperties(
+    [],
+    ['Category'],
+    (res) => {}
+  ) */
+
   const buttonBuscar = document.getElementById('buscar')
+  const buttonFakedata = document.getElementById('fakeData')
+  const buttonShowall = document.getElementById('showAll')
   buttonBuscar.onclick = async () => {
     const textoBuscar = document.getElementById('textoBuscar')
     // viewer.search(textoBuscar.value, (dbids) => {
@@ -37,6 +75,86 @@ initViewer(document.getElementById('preview')).then((viewer) => {
     // })
   }
 
+  buttonFakedata.onclick = async () => {
+    const dbids = await getFakeDataFromServer()
+    viewer.isolate(dbids)
+    viewer.fitToView(dbids)
+
+    viewer.model.getBulkProperties(dbids, ['Área', 'Volumen'], (res) => {
+      let area = 0.0
+      let volumen = 0.0
+      res.forEach((item) => {
+        const _area = item.properties.find(
+          (x) => x.displayName === 'Área'
+        )?.displayValue
+        if (_area) area += _area
+        const _volumen = item.properties.find(
+          (x) => x.displayName === 'Volumen'
+        )?.displayValue
+        if (_volumen) volumen += _volumen
+      })
+      document.getElementById('totalArea').innerText = area
+        ? area.toFixed(2)
+        : 'n/a'
+      document.getElementById('totalVolumen').innerText = volumen
+        ? volumen.toFixed(2)
+        : 'n/a'
+    })
+  }
+
+  viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
+    getAllLeafComponents(viewer, function (dbIds) {
+      let uniqueValues = {}
+      viewer.model.getBulkProperties(dbIds, ['Tag'], (res) => {
+        res.filter((item) => {
+          let displayValue = item.properties[0].displayValue
+          if (uniqueValues[displayValue]) {
+            uniqueValues[displayValue].push(item.dbId)
+            return
+          } else {
+            uniqueValues[displayValue] = [item.dbId]
+            return
+          }
+        })
+        console.log(uniqueValues)
+        // Seleccionar el elemento <select>
+        let selectElement = document.getElementById('uniqueSelect')
+
+        // Rellenar el elemento <select> con los valores únicos de uniqueValues
+        Object.keys(uniqueValues).forEach((displayValue) => {
+          let option = document.createElement('option')
+          option.value = displayValue
+          option.textContent = displayValue
+          selectElement.appendChild(option)
+        })
+
+        // Añadir un listener para el evento change
+        selectElement.addEventListener('change', function (event) {
+          // Obtener el valor seleccionado
+          let selectedValue = event.target.value
+          const _dbids = uniqueValues[selectedValue]
+          // Hacer algo con el valor seleccionado, por ejemplo, mostrarlo en la consola
+          viewer.isolate(_dbids)
+          viewer.fitToView(_dbids)
+
+          // Hay que intentar encontrar
+          const itemsPid = viewer2.model.getBulkProperties(
+            [],
+            ['Tag'],
+            (res) => {
+              const item = res.find(
+                (x) => x.properties[0].displayValue === selectedValue
+              )
+              console.log('pid: ', item)
+              viewer2.isolate(item.dbId)
+              viewer2.fitToView(item.dbId)
+            }
+          )
+        })
+      })
+    })
+  })
+
   // Añadir evento al viewer
   viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, () => {
     const dbid = viewer.getSelection()[0]
@@ -62,6 +180,13 @@ initViewer(document.getElementById('preview')).then((viewer) => {
         : 'n/a'
       document.getElementById('area').innerText = area ? area.toFixed(2) : 'n/a'
     })
+  })
+
+  const urn2 =
+    'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi8xMjMuZHdm'
+  initViewer(document.getElementById('preview2')).then((_viewer2) => {
+    viewer2 = _viewer2
+    loadModel(_viewer2, urn2)
   })
 })
 

@@ -31,38 +31,68 @@
     </div>
 
     <div class="container">
-      <div class="panel">
-        <h2>Este es mi panel</h2>
-        <input type="text" id="textoBuscar" />
-        <button id="buscar" class="btn">Buscar</button>
-        <ul>
-          <li>
-            <div class="item">
-              <p>Categoría:</p>
-              <p id="category"></p>
-            </div>
-          </li>
-          <li>
-            <div class="item">
-              <p>Tipo:</p>
-              <p id="type"></p>
-            </div>
-          </li>
-          <li>
-            <div class="item">
-              <p>Longitud:</p>
-              <p id="length"></p>
-            </div>
-          </li>
-          <li>
-            <div class="item">
-              <p>Área:</p>
-              <p id="area"></p>
-            </div>
-          </li>
-        </ul>
+      <div class="paneles">
+        <div class="panel">
+          <h2>Este es mi panel</h2>
+          <input type="text" id="textoBuscar" />
+          <button id="buscar" class="btn">Buscar</button>
+          <ul>
+            <li>
+              <div class="item">
+                <p>Categoría:</p>
+                <p id="category"></p>
+              </div>
+            </li>
+            <li>
+              <div class="item">
+                <p>Tipo:</p>
+                <p id="type"></p>
+              </div>
+            </li>
+            <li>
+              <div class="item">
+                <p>Longitud:</p>
+                <p id="length"></p>
+              </div>
+            </li>
+            <li>
+              <div class="item">
+                <p>Área:</p>
+                <p id="area"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h2>Fake data desde el servidor</h2>
+          <button id="fakeData" class="btn">Load Tags</button>
+
+          <ul>
+            <li>
+              <div class="item">
+                <p>Total Area:</p>
+                <p id="totalArea"></p>
+              </div>
+            </li>
+            <li>
+              <div class="item">
+                <p>Total Volumen:</p>
+                <p id="totalVolumen"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h2>Selector de categorias</h2>
+          <!-- <button id="showAll" class="btn">Show All</button> -->
+          <select id="uniqueSelect"></select>
+        </div>
       </div>
-      <div id="preview"></div>
+
+      <div class="viewers">
+        <div id="preview"></div>
+        <div id="preview2"></div>
+      </div>
       <div id="overlay"></div>
     </div>
 
