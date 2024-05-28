@@ -1,5 +1,9 @@
 import { initViewer, loadModel } from './viewer.js'
 import { getFakeDataFromServer } from './tagsServer.js'
+import { addGeometry } from './bolaspeludas.js'
+import { crearSpritesAlertas } from './alertas.js'
+
+let viewer2
 
 function getAllLeafComponents(viewer, callback) {
   var cbCount = 0 // count pending callbacks
@@ -28,22 +32,14 @@ function getAllLeafComponents(viewer, callback) {
 }
 
 initViewer(document.getElementById('preview')).then((viewer) => {
-  let viewer2
+  toastr.options = { positionClass: 'toast-top-center' }
   const urn = window.location.hash?.substring(1)
   setupModelSelection(viewer, urn)
   setupModelUpload(viewer)
 
-  // Aquí está disponible el viewer
-
-  /* const instances = viewer.model.getBulkProperties(
-    [],
-    ['Category'],
-    (res) => {}
-  ) */
-
   const buttonBuscar = document.getElementById('buscar')
   const buttonFakedata = document.getElementById('fakeData')
-  const buttonShowall = document.getElementById('showAll')
+  const proceso = document.getElementById('proceso')
   buttonBuscar.onclick = async () => {
     const textoBuscar = document.getElementById('textoBuscar')
     // viewer.search(textoBuscar.value, (dbids) => {
@@ -101,6 +97,19 @@ initViewer(document.getElementById('preview')).then((viewer) => {
         : 'n/a'
     })
   }
+  const preview = document.getElementById('preview')
+  preview.style.height = '100%'
+  proceso.onclick = () => {
+    if (preview.style.height === '100%') {
+      preview.style.height = '50%'
+      proceso.innerText = 'Cerrar Proceso'
+    } else {
+      preview.style.height = '100%'
+      proceso.innerText = 'Abrir Proceso'
+    }
+
+    viewer.resize()
+  }
 
   viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
     getAllLeafComponents(viewer, function (dbIds) {
@@ -145,6 +154,11 @@ initViewer(document.getElementById('preview')).then((viewer) => {
               const item = res.find(
                 (x) => x.properties[0].displayValue === selectedValue
               )
+              if (item) {
+                toastr.success('Tag encontrado')
+              } else {
+                toastr.error('Tag NO encontrado')
+              }
               console.log('pid: ', item)
               viewer2.isolate(item.dbId)
               viewer2.fitToView(item.dbId)
@@ -152,6 +166,16 @@ initViewer(document.getElementById('preview')).then((viewer) => {
           )
         })
       })
+    })
+
+    //addGeometry(viewer)
+    crearSpritesAlertas(viewer)
+
+    const urn2 =
+      'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi8xMjMuZHdm'
+    initViewer(document.getElementById('preview2')).then((_viewer2) => {
+      viewer2 = _viewer2
+      loadModel(_viewer2, urn2)
     })
   })
 
@@ -180,13 +204,6 @@ initViewer(document.getElementById('preview')).then((viewer) => {
         : 'n/a'
       document.getElementById('area').innerText = area ? area.toFixed(2) : 'n/a'
     })
-  })
-
-  const urn2 =
-    'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi8xMjMuZHdm'
-  initViewer(document.getElementById('preview2')).then((_viewer2) => {
-    viewer2 = _viewer2
-    loadModel(_viewer2, urn2)
   })
 })
 

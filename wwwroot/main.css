@@ -7,7 +7,9 @@ html {
 }
 
 .viewers {
+  position: relative;
   width: 100%;
+  height: calc(100vh - 3em);
 }
 
 #header,
@@ -15,7 +17,22 @@ html {
 #preview2,
 #overlay {
   width: 100%;
-  height: 50vh;
+}
+
+#preview,
+#preview2 {
+  position: absolute;
+  left: 0;
+}
+
+#preview {
+  height: 100%;
+  top: 0;
+}
+
+#preview2 {
+  height: 50%;
+  bottom: 0;
 }
 
 #header {
@@ -26,8 +43,6 @@ html {
   align-items: center;
 }
 
-#preview,
-#preview2,
 #overlay {
   position: relative;
   bottom: 0;
@@ -73,7 +88,7 @@ html {
 }
 
 .panel {
-  width: 500px;
+  width: 280px;
   max-height: calc(100vh - 3em) / 3;
   padding: 0.2rem 2rem;
 }
@@ -106,4 +121,47 @@ li {
 
 .item p:last-child {
   color: #099268;
+}
+
+.toast-top-center {
+  top: 12px;
+  right: 0;
+  left: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+}
+
+/* Estilo para el sidebar */
+.sidebar {
+  height: calc(100vh - 3em);
+  width: 0px;
+  background-color: white;
+}
+
+.sidebar .close-btn {
+  position: absolute;
+  top: 50px;
+  right: 25px;
+  font-size: 36px;
+}
+
+#device-list-container {
+  width: 300px;
+  margin: 5px auto;
+  margin-top: 40px;
+}
+
+.device-item {
+  border: 1px solid black;
+  background-color: #d3d3d3; /* Gris más claro */
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px; /* Bordes redondeados */
+}
+
+#chart-container {
+  width: 600px;
+  margin: 50px auto;
+  text-align: center;
 }

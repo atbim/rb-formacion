@@ -13,6 +13,14 @@
       rel="stylesheet"
       href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css"
     />
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
     <link rel="stylesheet" href="/main.css" />
     <title>Autodesk Platform Services: Simple Viewer</title>
   </head>
@@ -86,17 +94,30 @@
           <h2>Selector de categorias</h2>
           <!-- <button id="showAll" class="btn">Show All</button> -->
           <select id="uniqueSelect"></select>
+          <button id="proceso" class="btn">Abrir Proceso</button>
         </div>
       </div>
 
       <div class="viewers">
-        <div id="preview"></div>
         <div id="preview2"></div>
+        <div id="preview"></div>
+      </div>
+      <div id="mySidebar" class="sidebar">
+        <span id="close" class="close-btn" onclick="closeSidebar()">×</span>
+        <div id="device-list-container">
+          <!-- Los elementos de la lista se generarán aquí -->
+        </div>
+        <div id="chart-container">
+          <canvas id="myChart"></canvas>
+        </div>
       </div>
       <div id="overlay"></div>
     </div>
 
     <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.7.1/dist/chartjs-plugin-streaming.min.js"></script>
     <script src="/main.js" type="module"></script>
   </body>
 </html>
