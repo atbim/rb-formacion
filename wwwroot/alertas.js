@@ -96,7 +96,7 @@ export const crearSpritesAlertas = async (viewer) => {
     (event) => {
       const targetDbId = event.dbId
       console.log('event: ', targetDbId)
-      document.getElementById('mySidebar').style.width = '500px'
+      document.getElementById('mySidebar').style.width = '350px'
       viewer.resize()
     }
   )

@@ -89,7 +89,7 @@ html {
 }
 
 .panel {
-  width: 280px;
+  width: 380px;
   max-height: calc(100vh - 3em) / 3;
   padding: 0.2rem 2rem;
 }
