@@ -136,7 +136,6 @@ li {
 /* Estilo para el sidebar */
 .sidebar {
   height: calc(100vh - 3em);
-  width: 0px;
   background-color: white;
 }
 

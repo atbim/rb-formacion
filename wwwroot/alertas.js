@@ -36,7 +36,7 @@ export const crearSpritesAlertas = async (viewer) => {
 
   const close = document.getElementById('close')
   close.onclick = () => {
-    document.getElementById('mySidebar').style.width = '0'
+    document.getElementById('mySidebar').hidden = true
     viewer.resize()
   }
 
@@ -95,8 +95,8 @@ export const crearSpritesAlertas = async (viewer) => {
     Autodesk.DataVisualization.Core.MOUSE_CLICK,
     (event) => {
       const targetDbId = event.dbId
-      console.log('event: ', targetDbId)
-      document.getElementById('mySidebar').style.width = '350px'
+      const sidebar = document.getElementById('mySidebar')
+      sidebar.hidden = false
       viewer.resize()
     }
   )
