@@ -171,13 +171,13 @@ console.log('*++++++++++++++++')
                 )
                 if (item) {
                   toastr.success('Tag encontrado')
-                  //viewer2.isolate(item.dbId)
-                  //viewer2.fitToView(item.dbId)
-                  const camera = viewer.navigation.getCamera()
+                                   
+                  const camera = viewer2.navigation.getCamera()
                   viewer2.select(item.dbId)
-                  camera.zoom *= 1.3; // Aumentar el factor de zoom
-                  viewer.navigation.setRequestTransitionWithUp(true, camera);
-                
+                  const iden = viewer2.getSelection();
+                  viewer2.isolate(iden)
+                  viewer2.fitToView(iden)
+
                 } else {
                   toastr.error('Tag NO encontrado')
                 }
@@ -280,7 +280,7 @@ console.log('*++++++++++++++++')
       })
       
       let uniqueValues4 = {}
-      viewer.model.getBulkProperties(dbIds, ['ATEX'], (res) => 
+      viewer.model.getBulkProperties(dbIds, ['Atex'], (res) => 
         {
         res.filter((item) => {
           let displayValue4 = item.properties[0].displayValue
@@ -295,7 +295,10 @@ console.log('*++++++++++++++++')
         //console.log(uniqueValues3)
         // Seleccionar el elemento <select>
         let selectElement4 = document.getElementById('uniqueSelect4')
-
+         let option4 = document.createElement('option')
+         option4.value = '-'
+         option4.textContent = '-'
+         selectElement4.appendChild(option4)
         // Rellenar el elemento <select> con los valores únicos de uniqueValues
         Object.keys(uniqueValues4).forEach((displayValue4) => {
           let option4 = document.createElement('option')
@@ -330,14 +333,12 @@ console.log('*++++++++++++++++')
       
       //ojo3
 
-      console.log('LLEGAMOSssssssssssssss')
-      let arrayAtex = {}
-      console.log('LLEGAMOS')
+      
       
     })
 
     //addGeometry(viewer)
-    //crearSpritesAlertas(viewer)
+    crearSpritesAlertas(viewer)
 
     //const urn2 =
       //'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi8xMjMuZHdm'
@@ -480,7 +481,8 @@ async function onModelSelected(viewer, urn) {
         break
       default:
         clearNotification()
-        loadModel(viewer, urn)
+        loadModel(viewer,'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi9EZW1vXzIwMjQwNjA0Lm53ZA')
+        //loadModel(viewer, urn)
         break
     }
   } catch (err) {

@@ -43,8 +43,8 @@ myDataList.forEach((myData, index) => {
   };
 
   const devices = [
-    { name: 'Device' },
-    { name: 'Device 2' }
+    { name: 'TARSTY3-V401-BK02-Y0390' },
+    //{ name: 'Device 2' }
     // { name: 'Device 3' },
     // { name: 'Device 4' }
   ];
