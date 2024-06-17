@@ -26,25 +26,17 @@
   </head>
 
   <body>
-    <div id="header">
-      <img
-        class="logo"
-        src="https://cdn.autodesk.io/logo/black/stacked.png"
-        alt="Autodesk Platform Services"
-      />
-      <span class="title">Simple Viewer</span>
-      <select name="models" id="models"></select>
-      <button id="upload" title="Upload New Model">Upload</button>
-      <input style="display: none" type="file" id="input" />
-    </div>
-
     <div class="container">
       <div class="paneles">
-        <div class="panel">
-          <h2>Este es mi panel</h2>
+        <div class="noview">
           <input type="text" id="textoBuscar" />
-          <button id="buscar" class="btn">Buscar</button>
-          <ul>
+          <button id="buscar" class="button-area" style="display: hidden">
+            <span>Buscar</span>
+          </button>
+        </div>
+
+        <div class="panel">
+          <!-- <ul>
             <li>
               <div class="item">
                 <p>Categoría:</p>
@@ -69,13 +61,15 @@
                 <p id="area"></p>
               </div>
             </li>
-          </ul>
+          </ul> -->
         </div>
         <div class="panel">
-          <h2>Fake data desde el servidor</h2>
-          <button id="fakeData" class="btn">Load Tags</button>
+          <!-- <h2>Fake data desde el servidor</h2> -->
+          <button id="fakeData" class="button-area" style="visibility: hidden">
+            <span>Load Tags</span>
+          </button>
 
-          <ul>
+          <!-- <ul>
             <li>
               <div class="item">
                 <p>Total Area:</p>
@@ -88,13 +82,46 @@
                 <p id="totalVolumen"></p>
               </div>
             </li>
-          </ul>
+          </ul> -->
         </div>
         <div class="panel">
-          <h2>Selector de categorias</h2>
-          <!-- <button id="showAll" class="btn">Show All</button> -->
-          <select id="uniqueSelect"></select>
-          <button id="proceso" class="btn">Abrir Proceso</button>
+          <select name="models" id="models"></select>
+          <button id="upload" title="Upload New Model" class="button-area">
+            <span>Upload</span>
+          </button>
+          <input style="display: none" type="file" id="input" />
+          <h2>PIPING</h2>
+          <!-- <button id="showAll" class="button-area">Show All</button> -->
+          <div class="mb-5">
+            <label>TAG</label>
+            <select id="uniqueSelect"></select>
+          </div>
+          <div class="mb-5">
+            <label>SERVICE</label>
+            <select id="uniqueSelect2"></select>
+          </div>
+          <div class="mb-5">
+            <label>LINE</label>
+            <select id="uniqueSelect3"></select>
+          </div>
+          <div class="mb-5">
+            <label>Atex</label>
+            <select id="uniqueSelect4"></select>
+          </div>
+          <div class="mb-5">
+            <button id="proceso" class="button-area">
+              <span>P&ID</span>
+            </button>
+            <button id="atex" class="button-area">
+              <span>Atex</span>
+            </button>
+            <button id="cmdAlertas" class="button-area">
+              <span>Real Time</span>
+            </button>
+            <button id="cmdMostrar" class="button-area">
+              <span>Reset</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -119,5 +146,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.7.1/dist/chartjs-plugin-streaming.min.js"></script>
     <script src="/main.js" type="module"></script>
+    <script src="/alertas.js" type="module"></script>
+    
   </body>
 </html>

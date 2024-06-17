@@ -4,7 +4,8 @@ import { addGeometry } from './bolaspeludas.js'
 import { crearSpritesAlertas } from './alertas.js'
 
 let viewer2
-
+var abierto = false
+let uniqueValues4 = {}
 function getAllLeafComponents(viewer, callback) {
   var cbCount = 0 // count pending callbacks
   var components = [] // store the results
@@ -36,19 +37,25 @@ initViewer(document.getElementById('preview')).then((viewer) => {
   const urn = window.location.hash?.substring(1)
   setupModelSelection(viewer, urn)
   setupModelUpload(viewer)
-
   const buttonBuscar = document.getElementById('buscar')
   const buttonFakedata = document.getElementById('fakeData')
   const proceso = document.getElementById('proceso')
+  const atex = document.getElementById('atex')
+  
   buttonBuscar.onclick = async () => {
     const textoBuscar = document.getElementById('textoBuscar')
+    console.log('buscamos ' + textoBuscar)
     // viewer.search(textoBuscar.value, (dbids) => {
     // Buscar dbids
     const response = await fetch('/api/mydata')
     const data = await response.json()
     const dbids = data.dbids
-    viewer.isolate(dbids)
-    viewer.fitToView(dbids)
+   
+  viewer.isolate(dbids)
+  viewer.fitToView(dbids)
+  //viewer.select(dbids)
+  console.log('-----------------------------------------------')
+  console.log(dbids)  
 
     viewer.model.getBulkProperties(
       dbids, // Aquí debería de pasar la variable dbids que es el resultado de la búsqueda
@@ -75,7 +82,7 @@ initViewer(document.getElementById('preview')).then((viewer) => {
     const dbids = await getFakeDataFromServer()
     viewer.isolate(dbids)
     viewer.fitToView(dbids)
-
+console.log('*++++++++++++++++')
     viewer.model.getBulkProperties(dbids, ['Área', 'Volumen'], (res) => {
       let area = 0.0
       let volumen = 0.0
@@ -102,17 +109,22 @@ initViewer(document.getElementById('preview')).then((viewer) => {
   proceso.onclick = () => {
     if (preview.style.height === '100%') {
       preview.style.height = '50%'
-      proceso.innerText = 'Cerrar Proceso'
+      proceso.innerText = 'Close P&ID'
+      abierto = true
     } else {
       preview.style.height = '100%'
-      proceso.innerText = 'Abrir Proceso'
+      proceso.innerText = 'P&ID'
+      abierto = false
     }
 
     viewer.resize()
   }
-
+//aqui empieza
+  
+  //aqui acaba
   viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
-    getAllLeafComponents(viewer, function (dbIds) {
+    getAllLeafComponents(viewer, function (dbIds) 
+    {
       let uniqueValues = {}
       viewer.model.getBulkProperties(dbIds, ['Tag'], (res) => {
         res.filter((item) => {
@@ -125,10 +137,10 @@ initViewer(document.getElementById('preview')).then((viewer) => {
             return
           }
         })
-        console.log(uniqueValues)
+        //console.log(uniqueValues)
         // Seleccionar el elemento <select>
         let selectElement = document.getElementById('uniqueSelect')
-
+        
         // Rellenar el elemento <select> con los valores únicos de uniqueValues
         Object.keys(uniqueValues).forEach((displayValue) => {
           let option = document.createElement('option')
@@ -143,37 +155,195 @@ initViewer(document.getElementById('preview')).then((viewer) => {
           let selectedValue = event.target.value
           const _dbids = uniqueValues[selectedValue]
           // Hacer algo con el valor seleccionado, por ejemplo, mostrarlo en la consola
+          
+          
           viewer.isolate(_dbids)
-          viewer.fitToView(_dbids)
+          viewer.fitToView  (_dbids)
 
           // Hay que intentar encontrar
-          const itemsPid = viewer2.model.getBulkProperties(
-            [],
-            ['Tag'],
-            (res) => {
-              const item = res.find(
-                (x) => x.properties[0].displayValue === selectedValue
-              )
-              if (item) {
-                toastr.success('Tag encontrado')
-              } else {
-                toastr.error('Tag NO encontrado')
+          if (abierto){
+            const itemsPid = viewer2.model.getBulkProperties(
+              [],
+              ['Tag'],
+              (res) => {
+                const item = res.find(
+                  (x) => x.properties[0].displayValue === selectedValue
+                )
+                if (item) {
+                  toastr.success('Tag encontrado')
+                  //viewer2.isolate(item.dbId)
+                  //viewer2.fitToView(item.dbId)
+                  const camera = viewer.navigation.getCamera()
+                  viewer2.select(item.dbId)
+                  camera.zoom *= 1.3; // Aumentar el factor de zoom
+                  viewer.navigation.setRequestTransitionWithUp(true, camera);
+                
+                } else {
+                  toastr.error('Tag NO encontrado')
+                }
+                toastr.clearNotification
+                console.log('pid: ', item)
+               
               }
-              console.log('pid: ', item)
-              viewer2.isolate(item.dbId)
-              viewer2.fitToView(item.dbId)
-            }
-          )
+            )
+        }
         })
       })
+
+      //ojo
+      let uniqueValues2 = {}
+      viewer.model.getBulkProperties(dbIds, ['Service'], (res) => {
+        res.filter((item) => {
+          let displayValue2 = item.properties[0].displayValue
+          if (uniqueValues2[displayValue2]) {
+            uniqueValues2[displayValue2].push(item.dbId)
+            return
+          } else {
+            uniqueValues2[displayValue2] = [item.dbId]
+            return
+          }
+        })
+        //console.log(uniqueValues2)
+        // Seleccionar el elemento <select>
+        let selectElement2 = document.getElementById('uniqueSelect2')
+
+        // Rellenar el elemento <select> con los valores únicos de uniqueValues
+        Object.keys(uniqueValues2).forEach((displayValue2) => {
+          let option2 = document.createElement('option')
+          option2.value = displayValue2
+          option2.textContent = displayValue2
+          selectElement2.appendChild(option2)
+        })
+
+        // Añadir un listener para el evento change
+        selectElement2.addEventListener('change', function (event) {
+          // Obtener el valor seleccionado
+          let selectedValue2 = event.target.value
+          const _dbids2 = uniqueValues2[selectedValue2]
+          // Hacer algo con el valor seleccionado, por ejemplo, mostrarlo en la consola
+          viewer.isolate(_dbids2)
+          viewer.fitToView(_dbids2)
+
+          // Hay que intentar encontrar
+          
+          
+        })
+      })
+      //ojo2
+
+      //ojo3
+      let uniqueValues3 = {}
+      viewer.model.getBulkProperties(dbIds, ['Line Number'], (res) => 
+        {
+        res.filter((item) => {
+          let displayValue3 = item.properties[0].displayValue
+          if (uniqueValues3[displayValue3]) {
+            uniqueValues3[displayValue3].push(item.dbId)
+            return
+          } else {
+            uniqueValues3[displayValue3] = [item.dbId]
+            return
+          }
+        })
+        //console.log(uniqueValues3)
+        // Seleccionar el elemento <select>
+        let selectElement3 = document.getElementById('uniqueSelect3')
+
+        // Rellenar el elemento <select> con los valores únicos de uniqueValues
+        Object.keys(uniqueValues3).forEach((displayValue3) => {
+          let option3 = document.createElement('option')
+          option3.value = displayValue3
+          option3.textContent = displayValue3
+          selectElement3.appendChild(option3)
+        })
+        
+
+        
+        // Añadir un listener para el evento change
+        selectElement3.addEventListener('change', function (event) {
+          // Obtener el valor seleccionado
+          let selectedValue3 = event.target.value
+          const _dbids3 = uniqueValues3[selectedValue3]
+          // Hacer algo con el valor seleccionado, por ejemplo, mostrarlo en la consola
+          viewer.isolate(_dbids3)
+          viewer.fitToView(_dbids3)
+
+          // Hay que intentar encontrar
+          
+          
+        })
+
+        //ojo4
+
+        
+        //f ojo4
+      })
+      
+      let uniqueValues4 = {}
+      viewer.model.getBulkProperties(dbIds, ['ATEX'], (res) => 
+        {
+        res.filter((item) => {
+          let displayValue4 = item.properties[0].displayValue
+          if (uniqueValues4[displayValue4]) {
+            uniqueValues4[displayValue4].push(item.dbId)
+            return
+          } else {
+            uniqueValues4[displayValue4] = [item.dbId]
+            return
+          }
+        })
+        //console.log(uniqueValues3)
+        // Seleccionar el elemento <select>
+        let selectElement4 = document.getElementById('uniqueSelect4')
+
+        // Rellenar el elemento <select> con los valores únicos de uniqueValues
+        Object.keys(uniqueValues4).forEach((displayValue4) => {
+          let option4 = document.createElement('option')
+          option4.value = displayValue4
+          option4.textContent = displayValue4
+          selectElement4.appendChild(option4)
+        })
+        
+
+        
+        // Añadir un listener para el evento change
+        selectElement4.addEventListener('change', function (event) {
+          // Obtener el valor seleccionado
+          let selectedValue4 = event.target.value
+          const _dbids4 = uniqueValues4[selectedValue4]
+          // Hacer algo con el valor seleccionado, por ejemplo, mostrarlo en la consola
+          viewer.isolate(_dbids4)
+          viewer.fitToView(_dbids4)
+
+          // Hay que intentar encontrar
+          
+          
+        })
+
+        //ojo4
+
+        
+        //f ojo4
+      })
+      
+      
+      
+      //ojo3
+
+      console.log('LLEGAMOSssssssssssssss')
+      let arrayAtex = {}
+      console.log('LLEGAMOS')
+      
     })
 
     //addGeometry(viewer)
-    crearSpritesAlertas(viewer)
+    //crearSpritesAlertas(viewer)
 
-    const urn2 =
-      'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi8xMjMuZHdm'
-    initViewer(document.getElementById('preview2')).then((_viewer2) => {
+    //const urn2 =
+      //'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi8xMjMuZHdm'
+    const urn2 = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zng1bHIxd3NnYmZ4Y25yOWFvb3dnYXZlZ3kwemFtcXMtaml0LWRldi9EV0ZfMERERTYuZHdm'
+    
+      initViewer(document.getElementById('preview2')).then((_viewer2) => {
       viewer2 = _viewer2
       loadModel(_viewer2, urn2)
     })
@@ -184,7 +354,7 @@ initViewer(document.getElementById('preview')).then((viewer) => {
     const dbid = viewer.getSelection()[0]
     // Get Properties sólo devuelve las propiedaded de UN dbid
     viewer.getProperties(dbid, (res) => {
-      console.log(res)
+      //console.log(res)
       const category = res.properties.find(
         (p) => p.attributeName === 'Category'
       )?.displayValue
@@ -197,12 +367,12 @@ initViewer(document.getElementById('preview')).then((viewer) => {
       const area = res.properties.find(
         (p) => p.attributeName === 'Area'
       )?.displayValue
-      document.getElementById('category').innerText = category
-      document.getElementById('type').innerText = type
-      document.getElementById('length').innerText = length
-        ? length.toFixed(2)
-        : 'n/a'
-      document.getElementById('area').innerText = area ? area.toFixed(2) : 'n/a'
+      //document.getElementById('category').innerText = category
+      //document.getElementById('type').innerText = type
+      //document.getElementById('length').innerText = length
+        //? length.toFixed(2)
+       // : 'n/a'
+     // document.getElementById('area').innerText = area ? area.toFixed(2) : 'n/a'
     })
   })
 })

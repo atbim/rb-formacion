@@ -3,6 +3,7 @@ const bolaspeludas = [
   { id: 111100002, x: 1000, y: 1000, z: 1000, color: 0xff0000 },
   { id: 111100003, x: 2000, y: 2000, z: 2000, color: 0xff0000 },
   { id: 111100004, x: 3000, y: 3000, z: 3000, color: 0xff0000 },
+  { id: 111100004, x: 4000, y: 4000, z: 4000, color: 0xff0000 },
 ]
 
 export const addGeometry = async (viewer) => {
